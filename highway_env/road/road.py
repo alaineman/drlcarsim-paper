@@ -106,7 +106,7 @@ class RoadNetwork(object):
         for _from, to_dict in self.graph.items():
             for _to, lanes in to_dict.items():
                 for _id, l in enumerate(lanes):
-                    distances.append(l.distance(position))
+                    distances.append(np.abs(l.distance(position)))
                     indexes.append((_from, _to, _id))
                     # print(l.distance(position), (_from, _to, _id))
         return indexes[int(np.argmin(distances))]
@@ -143,7 +143,7 @@ class RoadNetwork(object):
                 for _id, l in enumerate(lanes):
                     if 3*np.pi/2 > abs(l.lane_heading(position) - previous_heading) > np.pi/2:
                         continue
-                    distances.append(l.distance(position))
+                    distances.append(np.abs(l.distance(position)))
                     indexes.append((_from, _to, _id))
                     # print(l.distance(position), (_from, _to, _id))
         return indexes[int(np.argmin(distances))]

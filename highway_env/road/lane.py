@@ -192,18 +192,35 @@ class StraightLane(AbstractLane):
     def width_at(self, longitudinal: float) -> float:
         return self.width
 
+    def is_on_lane(self, position: np.ndarray) -> bool:
+        proj_vector = self.projection_vector(position)
+        d_start = np.linalg.norm(np.subtract(proj_vector, self.start))
+        d_end = np.linalg.norm(np.subtract(proj_vector, self.end))
+        return d_start <= self.length and d_end <= self.length
+
+    def projection_vector(self, position: np.ndarray) -> Vector:
+        road_vector = np.subtract(self.end, self.start)
+        v = np.subtract(position, self.start)
+        return np.multiply(road_vector, np.dot(v, road_vector) / np.dot(road_vector, road_vector))
+
     def rejection_vector(self, position: np.ndarray) -> Vector:
         road_vector = np.subtract(self.end, self.start)
         v = np.subtract(position, self.start)
-        return np.subtract(v, np.multiply(road_vector, np.dot(v, road_vector)/np.dot(road_vector, road_vector)))
+        return np.subtract(v, np.multiply(road_vector, np.dot(v, road_vector) / np.dot(road_vector, road_vector)))
 
     def distance(self, position: np.ndarray) -> float:
+        if not self.is_on_lane(position):
+            d_start = np.linalg.norm(np.subtract(position, self.start))
+            d_end = np.linalg.norm(np.subtract(position, self.end))
+            return min(d_start, d_end)
+
         road_vector = np.subtract(self.end, self.start)
         d_vec = self.rejection_vector(position)
         left_normal_of_tangent = np.array(
             [road_vector[1] * -1, road_vector[0]])  # counter-clockwise orthogonal rotation
         sign = 1 if np.dot(d_vec, left_normal_of_tangent) >= 0 else -1
         return sign * np.linalg.norm(d_vec)
+
     def lane_heading(self, position: np.ndarray) -> float:
         road_vector = np.subtract(self.end, self.start)
         return utils.wrap_to_pi(np.arctan2(road_vector[1], road_vector[0]))
@@ -391,7 +408,8 @@ class CircularLane(AbstractLane):
     def distance_vector(self, position: np.ndarray) -> Vector:
         center_to_position_vector = np.subtract(position, self.center)
         center_pos_vec_length = np.linalg.norm(center_to_position_vector)
-        resulting_vector = np.multiply(center_to_position_vector, (center_pos_vec_length - self.radius) / center_pos_vec_length)
+        resulting_vector = np.multiply(center_to_position_vector,
+                                       (center_pos_vec_length - self.radius) / center_pos_vec_length)
         return resulting_vector
 
     def is_on_phase(self, position: np.ndarray) -> bool:
@@ -402,7 +420,8 @@ class CircularLane(AbstractLane):
         if self.clockwise and (
                 (alpha > beta and (angle > alpha or angle < beta)) or (alpha < beta and beta > angle > alpha)):
             return True
-        elif (not self.clockwise) and ((alpha > beta and beta < angle < alpha) or (alpha < beta and (angle < alpha or angle > beta))):
+        elif (not self.clockwise) and (
+                (alpha > beta and beta < angle < alpha) or (alpha < beta and (angle < alpha or angle > beta))):
             return True
         return False
 
@@ -417,7 +436,8 @@ class CircularLane(AbstractLane):
         d_vec = self.distance_vector(position)
         if self.is_on_phase(position):
             tangent_vec = self.tangent_vector(position)
-            left_normal_of_tangent = np.array([tangent_vec[1] * -1, tangent_vec[0]]) #counter-clockwise orthogonal rotation
+            left_normal_of_tangent = np.array(
+                [tangent_vec[1] * -1, tangent_vec[0]])  # counter-clockwise orthogonal rotation
             sign = 1 if np.dot(d_vec, left_normal_of_tangent) >= 0 else -1
             return sign * np.linalg.norm(d_vec)
         d_start = np.linalg.norm(np.subtract(position, self.start))
@@ -431,9 +451,9 @@ class CircularLane(AbstractLane):
         if is_outside_circle_arc:
             dv = np.multiply(dv, -1)
         if self.clockwise:
-            return np.array([dv[1] * -1, dv[0]]) #counter-clockwise orthogonal rotation
+            return np.array([dv[1] * -1, dv[0]])  # counter-clockwise orthogonal rotation
         else:
-            return np.array([dv[1], dv[0] * -1]) #clockwise orthogonal rotation
+            return np.array([dv[1], dv[0] * -1])  # clockwise orthogonal rotation
 
     def lane_heading(self, position: np.ndarray) -> float:
         if self.is_on_phase(position):
