@@ -4,3 +4,12 @@
 .idea/modules.xml
 .idea/misc.xml
 .idea/inspectionProfiles/profiles_settings.xml
+highway_env/road/__pycache__/lane.cpython-38.pyc
+highway_env/road/__pycache__/road.cpython-38.pyc
+highway_env/vehicle/__pycache__/kinematics.cpython-38.pyc
+highway_env/envs/__pycache__/__init__.cpython-38.pyc
+highway_env/envs/__pycache__/__init__.cpython-38.pyc
+highway_env/envs/__pycache__/roundabout_env.cpython-38.pyc
+highway_env/road/__pycache__/road.cpython-38.pyc
+highway_env/road/__pycache__/lane.cpython-38.pyc
+highway_env/vehicle/__pycache__/kinematics.cpython-38.pyc

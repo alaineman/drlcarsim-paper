@@ -25,8 +25,8 @@ s1 = StraightLane([0, 0], [3, 3])
 left_position = [-1, 2]
 right_position = [3, 0]
 
-print("Straight Left:", s1.distance(left_position))
-print("Straight right:", s1.distance(right_position))
+# print("Straight Left:", s1.distance(left_position))
+# print("Straight right:", s1.distance(right_position))
 
 ##
 center = [0, 0]  # [m]
@@ -38,12 +38,12 @@ radii = [radius, radius + 4, radius + 8]
 n, c, s = LineType.NONE, LineType.CONTINUOUS, LineType.STRIPED
 line = [[c, s], [n, s], [n, c]]
 for lane in range(3):
-    net.add_lane("se", "ex",
-                 CircularLane(center, radii[lane], np.deg2rad(90 - alpha), np.deg2rad(alpha),
-                              clockwise=False, line_types=line[lane]))
-    net.add_lane("ex", "ee",
-                 CircularLane(center, radii[lane], np.deg2rad(alpha), np.deg2rad(-alpha),
-                              clockwise=False, line_types=line[lane]))
+    CLE0 = CircularLane(center, radii[lane], np.deg2rad(90 - alpha), np.deg2rad(alpha),
+                              clockwise=False, line_types=line[lane])
+    net.add_lane("se", "ex", CLE0)
+    CLE1 = CircularLane(center, radii[lane], np.deg2rad(alpha), np.deg2rad(-alpha),
+                              clockwise=False, line_types=line[lane])
+    net.add_lane("ex", "ee", CLE1)
     net.add_lane("ee", "nx",
                  CircularLane(center, radii[lane], np.deg2rad(-alpha), np.deg2rad(-90 + alpha),
                               clockwise=False, line_types=line[lane]))
@@ -80,9 +80,10 @@ net.add_lane("sx", "sxs", SineLane([-2 - a, -dev / 2 + delta_en], [-2 - a, dev /
 net.add_lane("sxs", "sxr", StraightLane([-2, dev / 2], [-2, access], line_types=(n, c)))
 net.add_lane("sxr", "ser", StraightLane([-2, access], [2, access], line_types=(n, n)))
 
-net.add_lane("eer", "ees", StraightLane([access, -2], [dev / 2, -2], line_types=(s, c)))
-net.add_lane("ees", "ee",
-             SineLane([dev / 2, -2 - a], [dev / 2 - delta_st, -2 - a], a, w, -np.pi / 2, line_types=(c, c)))
+SL3 = StraightLane([access, -2], [dev / 2, -2], line_types=(s, c))
+net.add_lane("eer", "ees", SL3)
+SL4 = SineLane([dev / 2, -2 - a], [dev / 2 - delta_st, -2 - a], a, w, -np.pi / 2, line_types=(c, c))
+net.add_lane("ees", "ee", SL4)
 net.add_lane("ex", "exs", SineLane([-dev / 2 + delta_en, 2 + a], [dev / 2, 2 + a], a, w, -np.pi / 2 + w * delta_en,
                                    line_types=(c, c)))
 net.add_lane("exs", "exr", StraightLane([dev / 2, 2], [access, 2], line_types=(n, c)))
@@ -107,6 +108,10 @@ net.add_lane("wx", "wxs", SineLane([dev / 2 - delta_en, -2 - a], [-dev / 2, -2 -
 net.add_lane("wxs", "wxr", StraightLane([-dev / 2, -2], [-access, -2], line_types=(n, c)))
 net.add_lane("wxr", "wer", StraightLane([-access, -2], [-access, 2], line_types=(n, n)))
 
-print(SL2.distance([1, 1]), SL2.rejection_vector([1, 1]))
-print(net.get_closest_lane_index([1, 1]))
+loc = [28, -6]
+
+print(CLE1.distance(loc), CLE1.distance_vector(loc), CLE1.is_on_phase(loc), CLE1.lane_heading(loc), CLE1.tangent_vector(loc))
+print(CLE0.is_on_phase(loc), CLE0.lane_heading(loc))
+# print(net.get_closest_lane_index(loc))
+# print(net.get_nearest_lane_index(("se", "ex", 0), loc))
 

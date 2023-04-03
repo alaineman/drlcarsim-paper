@@ -190,7 +190,7 @@ class Vehicle(RoadObject):
                 old_lane.colour = (255, 255, 255) # WHITE
                 self.lane.colour = (200, 200, 0) # YELLOW
             elif self.lane.colour != (200, 200, 0) and self.track_affiliated_lane: #initial set
-                self.lane.colour =  (200, 200, 0)
+                self.lane.colour = (200, 200, 0)
             if self.road.record_history:
                 self.history.appendleft(self.create_from(self))
 

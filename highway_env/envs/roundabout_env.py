@@ -156,6 +156,7 @@ class RoundaboutEnv(AbstractEnv):
             ego_vehicle.plan_route_to("wxr")
         except AttributeError:
             pass
+        ego_vehicle.track_affiliated_lane = True
         self.road.vehicles.append(ego_vehicle)
         self.vehicle = ego_vehicle
 
