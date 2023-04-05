@@ -387,3 +387,22 @@ class Performance:
         print('The average duration time is of', n, 'measurements is:', np.average(self.run_time))
         print('The on_lane rate of', n, 'measurements is:', np.average(self.lane_time)/np.average(self.run_time))
         print('The collision rate of', n, 'measurements is:', np.average(self.collision))
+
+    def string_rep(self):
+        n = self.measurements
+        return f" The average speed of {n} measurements is: {np.average(self.average_speed)} \n" \
+               f" The average peak jerk of {n} measurements is: {np.average(self.jerk_peak)} \n" \
+               f" The average total jerk of {n} measurements is: {np.average(self.jerk_cumulative)} \n" \
+               f" The average total distance of {n} measurements is: {np.average(self.travel_distance)} \n" \
+               f" The average total steering of {n} measurements is: {np.average(self.steering)} \n" \
+               f" The average duration time is of {n} measurements is: {np.average(self.run_time)} \n" \
+               f" The on_lane rate of {n} measurements is: {np.average(self.lane_time) / np.average(self.run_time)} \n" \
+               f" The collision rate of {n} measurements is: {np.average(self.collision)} \n" \
+ \
+                def array_rep(self):
+
+            n = self.measurements
+        return [np.average(self.average_speed), np.average(self.jerk_peak), np.average(self.jerk_cumulative),
+                np.average(self.travel_distance),
+                np.average(self.steering), np.average(self.run_time),
+                np.average(self.lane_time) / np.average(self.run_time), np.average(self.collision)]
