@@ -398,10 +398,9 @@ class Performance:
                f" The average duration time is of {n} measurements is: {np.average(self.run_time)} \n" \
                f" The on_lane rate of {n} measurements is: {np.average(self.lane_time) / np.average(self.run_time)} \n" \
                f" The collision rate of {n} measurements is: {np.average(self.collision)} \n" \
- \
-                def array_rep(self):
 
-            n = self.measurements
+    def array_rep(self):
+        n = self.measurements
         return [np.average(self.average_speed), np.average(self.jerk_peak), np.average(self.jerk_cumulative),
                 np.average(self.travel_distance),
                 np.average(self.steering), np.average(self.run_time),
