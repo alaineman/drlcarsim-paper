@@ -548,6 +548,7 @@ class ComplexcityEnv(AbstractEnv):
 
         self.road.vehicles.append(ego_vehicle)
         self.vehicle = ego_vehicle
+        ego_vehicle.track_affiliated_lane = True
         #self.vehicle.destination_location = self.destination_location
 
 
@@ -619,41 +620,7 @@ class ContinuousComplexcityEnv(ComplexcityEnv):
             reward += np.cos(anglediff)*self.vehicle.speed
             
         #punishment for distance to the lane
-        reward -= self.vehicle.lane_distance**1.5
-        #print(self.vehicle.lane.distance(self.vehicle.position))
-        """
-        Proposal for distance reward progression
-        """
-        #original_destination_vector_length = np.linalg.norm(self.destination_location - self.vehicle.starting_position)
-
-        # where self.vehicle.starting_position is only set once at initialize
-        #destination_vector = self.destination_location - self.vehicle.position
-        #distance_to_goal = np.linalg.norm(destination_vector)
-        #if distance_to_goal < self.best_closest_distance: #getting closer!
-            # print('getting closer')
-            # print(distance_to_goal)
-            # self.best_closest_distance = distance_to_goal
-            # reward += 3 * (self.original_destination_vector_length - distance_to_goal)/self.original_destination_vector_length
-        # else:
-            # reward += 3 * (self.original_destination_vector_length - self.best_closest_distance)/self.original_destination_vector_length
-        """
-        Old distance reward progression formula
-        """
-        #reward for approaching destination
-        # destination_vector = self.destination_location-self.vehicle.position
-        # distance_to_goal = np.linalg.norm(destination_vector)
-        # if self.previous_distance > 0:
-        #     reward += 10*(self.previous_distance - distance_to_goal)
-        #print(distance_to_goal)
-        #print(self.previous_distance-distance_to_goal)
-        # self.previous_distance = distance_to_goal
-        #print('destlocation:',self.destination_location)
-        #print('ownlocation:',self.vehicle.position)
-
-        #if distance_to_goal < 5:
-        #    # print("Destination reached!")
-        #    reward = 10
-        #    destination_reached = 1
+        reward -= abs(self.vehicle.lane_distance*np.sqrt(abs(self.vehicle.lane_distance)))
         
         #scaling
         reward = reward/20
@@ -662,7 +629,7 @@ class ContinuousComplexcityEnv(ComplexcityEnv):
         if self.vehicle.crashed:
             return -10
         
-        return reward
+        return max(reward,-5)
 
 class DiscretizedComplexcityEnv(ContinuousComplexcityEnv):
     @classmethod
