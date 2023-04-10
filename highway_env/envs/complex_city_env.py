@@ -617,10 +617,10 @@ class ContinuousComplexcityEnv(ComplexcityEnv):
 
         #effective speed
         if self.vehicle.speed > 0:
-            reward += np.cos(anglediff)*self.vehicle.speed
+            reward += np.cos(anglediff)*self.vehicle.speed/max(1,abs(self.vehicle.lane_distance))
             
         #punishment for distance to the lane
-        reward -= abs(self.vehicle.lane_distance*np.sqrt(abs(self.vehicle.lane_distance)))
+        #reward += 30/abs(self.vehicle.lane_distance)
         
         #scaling
         reward = reward/20
@@ -629,7 +629,7 @@ class ContinuousComplexcityEnv(ComplexcityEnv):
         if self.vehicle.crashed:
             return -10
         
-        return max(reward,-5)
+        return reward
 
 class DiscretizedComplexcityEnv(ContinuousComplexcityEnv):
     @classmethod

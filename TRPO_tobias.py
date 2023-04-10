@@ -45,9 +45,9 @@ env.reset()
 n_cpu = 6
 batch_size = 64
 model = TRPO("MlpPolicy", env,
-             learning_rate=0.0001,
+             learning_rate=0.0003,
              n_steps=1024,
-             batch_size=8,
+             batch_size=128,
              gamma=0.99,
              cg_max_steps=15,
              cg_damping=0.1,
@@ -58,13 +58,13 @@ model = TRPO("MlpPolicy", env,
              use_sde=False,
              sde_sample_freq=-1,
              normalize_advantage=True,
-             target_kl=0.01,
+             target_kl=0.015,
              sub_sampling_factor=1,
              policy_kwargs=None,
              verbose=1,
              tensorboard_log="highway_TRPO/",
              seed=None,
-             device='auto',
+             device='cuda',
              _init_setup_model=True)
 
 
@@ -77,12 +77,13 @@ model.set_env(env)
 #model.set_parameters(params)#, exact_match=True)
 
 print('learning....')
-model.learn(int(200000),progress_bar=True)
+model.learn(int(100000),progress_bar=True)
 print('done!')
-model.save(situation+'_trpo/fixed_test')
+name = '_trpo/fixed_testtolga4small'
+model.save(situation+name)
 
 print()
-print("Saved!!")
+print(situation+name+" is saved!!")
 print()
 
 
