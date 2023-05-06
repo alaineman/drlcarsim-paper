@@ -328,6 +328,53 @@ class DiscretizedIntersectionEnv(IntersectionEnv):
         })
         return config
 
+class ContinuousIntersectionReward2(IntersectionEnv):
+    @classmethod
+    def default_config(cls) -> dict:
+        config = super().default_config()
+        config.update({
+            "observation": {
+                "type": "Kinematics",
+                "vehicles_count": 5,
+                "features": ["presence", "x", "y", "vx", "vy", "long_off", "lat_off", "ang_off"],
+            },
+            "action": {
+                "type": "ContinuousAction",
+                "steering_range": [-np.pi / 3, np.pi / 3],
+                "longitudinal": True,
+                "lateral": True,
+                "dynamical": True
+            },
+        })
+        return config
+
+    def _reward(self, action: int) -> float:
+        reward = 0
+        
+        #punishment for driving on the left lane
+        # lane = self.vehicle.target_lane_index[2] if isinstance(self.vehicle, ControlledVehicle) \
+        #     else self.vehicle.lane_index[2]
+        # reward -= lane
+        #
+        #take the difference in radians of the heading of the car and the heading of the road
+        anglediff = min(abs(self.vehicle.heading-self.vehicle.lane.lane_heading(self.vehicle.position)),abs(self.vehicle.lane.lane_heading(self.vehicle.position))+abs(self.vehicle.heading))
+
+        #effective speed
+        if self.vehicle.speed > 0:
+            reward += np.cos(anglediff)*self.vehicle.speed/max(1,abs(self.vehicle.lane_distance))
+            
+        #punishment for distance to the lane
+        #reward += 30/abs(self.vehicle.lane_distance)
+        
+        #scaling
+        reward = reward/20
+        
+        #crash punishment
+        if self.vehicle.crashed:
+            return -10
+        
+        return reward
+
 TupleMultiAgentIntersectionEnv = MultiAgentWrapper(MultiAgentIntersectionEnv)
 
 register(
@@ -353,4 +400,9 @@ register(
 register(
     id='intersection-multi-agent-v1',
     entry_point='highway_env.envs:TupleMultiAgentIntersectionEnv',
+)
+
+register(
+    id='intersection-v3',
+    entry_point='highway_env.envs:ContinuousIntersectionReward2',
 )
