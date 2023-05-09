@@ -242,6 +242,49 @@ class RoundaboutReward2(RoundaboutEnv):
         
         return reward
 
+class DiscreteRoundaboutReward2(RoundaboutEnv):
+    @classmethod
+    def default_config(cls) -> dict:
+        config = super().default_config()
+        config.update({
+            "observation": {
+                "type": "Kinematics",
+                #"features": ["presence", "x", "y", "vx", "vy", "long_off", "lat_off", "ang_off"],
+            },
+            "action": {
+                "type": "DiscreteAction",
+                "longitudinal": True,
+                "lateral": True,
+                "actions_per_axis": (3, 5)
+            },
+        })
+        return config
+    
+    def _reward(self, action: int) -> float:
+        reward = 0
+        
+        #punishment for driving on the left lane
+        # lane = self.vehicle.target_lane_index[2] if isinstance(self.vehicle, ControlledVehicle) \
+        #     else self.vehicle.lane_index[2]
+        # reward -= lane
+        #
+        #take the difference in radians of the heading of the car and the heading of the road
+        anglediff = min(abs(self.vehicle.heading-self.vehicle.lane.lane_heading(self.vehicle.position)),abs(self.vehicle.lane.lane_heading(self.vehicle.position))+abs(self.vehicle.heading))
+
+        #effective speed divided by the distance to the lane
+        if self.vehicle.speed > 0:
+            #reward += abs(self.vehicle.position[1]-52)*np.cos(anglediff)*self.vehicle.speed/max(0.2,abs(self.vehicle.lane_distance))
+            reward += np.cos(anglediff)*self.vehicle.speed/max(0.2,abs(self.vehicle.lane_distance))
+      
+        #scaling
+        reward = reward/20
+        
+        #crash punishment
+        if self.vehicle.crashed:
+            return -10
+        
+        return reward
+
 register(
     id='roundabout-v0',
     entry_point='highway_env.envs:RoundaboutEnv',
@@ -255,4 +298,9 @@ register(
 register(
     id='roundabout-v2',
     entry_point='highway_env.envs:RoundaboutReward2',
+)
+
+register(
+    id='roundabout-v3',
+    entry_point='highway_env.envs:DiscreteRoundaboutReward2',
 )
