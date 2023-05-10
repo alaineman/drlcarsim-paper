@@ -285,6 +285,24 @@ class DiscreteRoundaboutReward2(RoundaboutEnv):
         
         return reward
 
+class DiscreteRoundaboutReward1(RoundaboutEnv):
+    @classmethod
+    def default_config(cls) -> dict:
+        config = super().default_config()
+        config.update({
+            "observation": {
+                "type": "Kinematics",
+                #"features": ["presence", "x", "y", "vx", "vy", "long_off", "lat_off", "ang_off"],
+            },
+            "action": {
+                "type": "DiscreteAction",
+                "longitudinal": True,
+                "lateral": True,
+                "actions_per_axis": (3, 5)
+            },
+        })
+        return config
+
 register(
     id='roundabout-v0',
     entry_point='highway_env.envs:RoundaboutEnv',
@@ -304,3 +322,9 @@ register(
     id='roundabout-v3',
     entry_point='highway_env.envs:DiscreteRoundaboutReward2',
 )
+
+register(
+    id='roundabout-v4',
+    entry_point='highway_env.envs:DiscreteRoundaboutReward1',
+)
+

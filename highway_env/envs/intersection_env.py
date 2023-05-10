@@ -28,7 +28,7 @@ class IntersectionEnv(AbstractEnv):
             "observation": {
                 "type": "Kinematics",
                 "vehicles_count": 15,
-                "features": ["presence", "x", "y", "vx", "vy", "cos_h", "sin_h"],
+                #"features": ["presence", "x", "y", "vx", "vy", "cos_h", "sin_h"],
                 "features_range": {
                     "x": [-100, 100],
                     "y": [-100, 100],
@@ -315,7 +315,7 @@ class DiscretizedIntersectionEnv(IntersectionEnv):
             "observation": {
                 "type": "Kinematics",
                 "vehicles_count": 5,
-                "features": ["presence", "x", "y", "vx", "vy", "long_off", "lat_off", "ang_off"],
+                #"features": ["presence", "x", "y", "vx", "vy", "long_off", "lat_off", "ang_off"],
             },
             "action": {
                 "type": "DiscreteAction",
@@ -421,6 +421,7 @@ class DiscreteIntersectionReward2(IntersectionEnv):
             return -10
         
         return reward
+
 
 TupleMultiAgentIntersectionEnv = MultiAgentWrapper(MultiAgentIntersectionEnv)
 

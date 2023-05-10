@@ -219,6 +219,24 @@ class DiscreteMergeEnvReward2(MergeEnv):
         
         return reward
 
+class DiscreteMergeEnvReward1(MergeEnv):
+    @classmethod
+    def default_config(cls) -> dict:
+        config = super().default_config()
+        config.update({
+            "observation": {
+                "type": "Kinematics",
+                #"features": ["presence", "x", "y", "vx", "vy", "long_off", "lat_off", "ang_off"],
+            },
+            "action": {
+                "type": "DiscreteAction",
+                "longitudinal": True,
+                "lateral": True,
+                "actions_per_axis": (3, 5)
+            },
+        })
+        return config
+
 register(
     id='merge-v0',
     entry_point='highway_env.envs:MergeEnv',
@@ -232,4 +250,9 @@ register(
 register(
     id='merge-v2',
     entry_point='highway_env.envs:DiscreteMergeEnvReward2',
+)
+
+register(
+    id='merge-v3',
+    entry_point='highway_env.envs:DiscreteMergeEnvReward1',
 )
