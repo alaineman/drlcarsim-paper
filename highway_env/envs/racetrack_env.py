@@ -363,6 +363,18 @@ class RacetrackEnvModifiedDiscrete(RacetrackEnv):
         config.update({
             "simulation_frequency": 15,
             "policy_frequency": 15,
+            "observation": {
+                "type": "Kinematics",
+                "vehicles_count": 5,
+                #"features": ["presence", "x", "y", "vx", "vy", "lane_distance", "lane_heading_difference"],
+            },
+            "action": {
+                "type": "DiscreteAction",
+                "longitudinal": True,
+                "lateral": True,
+                "target_speeds": [0, 15, 30],
+                "actions_per_axis": (3, 5)
+            }
         })
         return config
 
