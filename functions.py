@@ -242,7 +242,7 @@ def performace_test(env, model, save_path, i, number_test_performance):
 
         stepcounter = 0
 
-        while (not done) and ego_car.speed > 2 and stepcounter < 5:  # 800
+        while (not done) and ego_car.speed > 2 and stepcounter < 800:  # 800
             action, _states = model.predict(obs, deterministic=True)
             obs, reward, done, truncated, info = env.step(action)
             stepcounter += 1
