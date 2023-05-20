@@ -145,11 +145,26 @@ class Vehicle(RoadObject):
     def lane_distance(self) -> float:
         return self.lane.distance(self.position)
 
+    #Signed lane heading difference. Wrapping perserves the sign.
+    #Remark: The sign of the multiplication of lane_distance and lane_difference_heading is
+    # - Positive, whenever the car if deviating from the road
+    # - Negative, whenever the car is heading to the road
     @property
     def lane_heading_difference(self) -> float:
         if self.lane is None:
             print('trouble coming!')
-        return min(abs(self.heading-self.lane.lane_heading(self.position)), abs(self.lane.lane_heading(self.position) + self.heading))
+
+        #conditional wrapping to confine the angle
+        if self.heading-self.lane.lane_heading(self.position) < -np.pi:
+            return self.heading-self.lane.lane_heading(self.position)+2*np.pi
+        elif self.heading-self.lane.lane_heading(self.position) > np.pi:
+            return self.heading-self.lane.lane_heading(self.position)-2*np.pi
+
+        #default
+        return self.heading-self.lane.lane_heading(self.position)
+
+        #old unsigned difference
+        #return min(abs(self.heading-self.lane.lane_heading(self.position)), abs(self.lane.lane_heading(self.position) + self.heading))
 
     @property
     def position_change(self) -> float:
